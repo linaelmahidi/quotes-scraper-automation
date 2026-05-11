@@ -1,0 +1,29 @@
+name: Daily Quotes Scrape
+
+on:
+  schedule:
+    # Dit draait elke dag om 08:00 UTC 
+    - cron: '0 8 * * *'
+  # Dit geeft ons de 'Play' knop om het nu direct te testen
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code ophalen uit repo
+        uses: actions/checkout@v4
+
+      - name: Python installeren
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Bibliotheken installeren
+        run: pip install requests beautifulsoup4 pandas supabase
+
+      - name: Script draaien met de Secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python scrape.py
